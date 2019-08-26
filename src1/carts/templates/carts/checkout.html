@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block base_head %}
+ <link rel="icon"  href="http://pluspng.com/img-png/dell-logo-png-new-svg-image-2000.png" >
+{% endblock %}
+
+{% block content %}
+{% if not billing_profile %}
+    <div class='row text-center'>
+    <div class='col-12 col-md-6'>
+        <p class='lead'>Login</p>
+        {% include 'accounts/snippets/form.html' with form=login_form next_url=request.build_absolute_uri %}
+    </div>
+    <div class='col-12 col-md-6'> 
+        Continue as Guest
+
+        {% url "guest_register" as guest_register_url %} 
+        <br><br>
+         <!-- <button type="button" class='btn btn-default' action="/register/guest/">Submit</button>  -->
+        {% include 'accounts/snippets/form.html' with form=guest_form next_url=request.build_absolute_uri action_url=guest_register_url %}
+
+    </div>
+
+    </div>
+      <div class="container">
+   <p>Progress Bar:</p> 
+     <div class="progress">
+    <div class="progress-bar bg-success" style="width:25%">25%</div>
+  </div>
+</div>
+</div>
+
+{% else %}
+            
+        {% if not object.shipping_address and shipping_address_required %}
+
+         <div class='row'>
+            <div class='col-12'>
+                <p class='lead'>Shipping Address</p>
+                <hr/>
+            </div>
+            <div class='col-6'>
+                
+
+           
+
+                    {% url "checkout_address_create" as checkout_address_create %}
+                    {% include 'addresses/form.html' with form=address_form next_url=request.build_absolute_uri action_url=checkout_address_create address_type='shipping' %}'
+
+
+
+             </div>
+         <div class='col-6'>
+            {% url 'checkout_address_reuse' as checkout_address_reuse %}
+            {% include 'addresses/prev_addresses.html' with address_qs=address_qs next_url=request.build_absolute_uri address_type='shipping' action_url=checkout_address_reuse %}
+            </div>
+        </div>
+         <div class="container">
+   <p>Progress Bar:</p> 
+           <div class="progress">
+    <div class="progress-bar bg-success" style="width:35%">35%</div>
+  </div>
+</div>
+</div>
+
+        {% elif not object.billing_address %}
+        <div class='row'>
+            <div class='col-12'>
+                 <p class='lead'>Billing Address</p>
+                <hr/>
+            </div>
+            <div class='col-6'>
+               
+            {% url "checkout_address_create" as checkout_address_create %}
+            {% include 'addresses/form.html' with form=address_form next_url=request.build_absolute_uri action_url=checkout_address_create address_type='billing' %}
+            </div>
+              <div class='col-6'>
+                {% url 'checkout_address_reuse' as checkout_address_reuse %}
+             {% include 'addresses/prev_addresses.html' with address_qs=address_qs next_url=request.build_absolute_uri  address_type='billing' action_url=checkout_address_reuse %}
+         </div>
+
+         
+        </div>
+         <div class="container">
+   <p>Progress Bar:</p> 
+         <div class="progress">
+    <div class="progress-bar bg-success" style="width:50%">50%</div>
+  </div>
+</div>
+</div>
+        {% else %}
+            {% if not has_card %}
+                <!-- enter credit card here -->
+                <!-- <p>HIhidhisdihsdihsdhsi</p> -->
+                <table style="width:30%">
+                  <tr>
+                     <td><a href="https://docs.google.com/forms/d/e/1FAIpQLSdg1fyinK2ce5gU09l85ltAlLXtsSL81Lifcg9OKFE0qThOtg/viewform?usp=sf_link" ><img src="https://developers.google.com/pay/api/images/brand-guidelines/google-pay-mark.png" style="width:90px;height: 50px;margin-bottom: 15px;"></a></td>
+                     <td> <a href="https://docs.google.com/forms/d/e/1FAIpQLSdg1fyinK2ce5gU09l85ltAlLXtsSL81Lifcg9OKFE0qThOtg/viewform?usp=sf_link"><img src="https://pbs.twimg.com/profile_images/1049190990903357440/Z-un0dmA.jpg" style="width:60px;height: 60px;margin-bottom: 15px;"></a>
+                 </table>
+                
+                <div class='stripe-payment-form' data-token='{{ publish_key }}' data-next-url='{{ request.build_absolute_uri }}' data-btn-title='Add Payment Method'></div>
+
+                 <div class="container">
+   <p>Progress Bar:</p> 
+                 <div class="progress">
+    <div class="progress-bar bg-success" style="width:75%">75%</div>
+  </div>
+</div>
+</div>
+
+            {% else %}
+                <h1>Finalize Checkout</h1>
+                <p>Cart Items: {% for product in object.cart.products.all %}{{ product }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+                <p>Shipping Address: {{ object.shipping_address_final }}</p>
+                <p>Billing Address: {{ object.billing_address_final }}</p>
+                <p>Payment Method: {{ billing_profile.default_card }} (<a href="{{ billing_profile.get_payment_method_url }}?next={{ request.build_absolute_uri }}">Change</a>)</p>
+                <p>Cart Total: {{ object.cart.total }}</p>
+                <p>Shipping Total: {{ object.shipping_total }}</p>
+                <p>Order Total: {{ object.total }}</p>
+
+                <form class='form' method='POST' action="">{% csrf_token %}
+                    <button type='submit' class='btn btn-success'>Checkout</button>
+                </form>
+                 <div class="container">
+   <p>Progress Bar:</p> 
+                 <div class="progress">
+    <div class="progress-bar bg-success" style="width:100%">100%</div>
+  </div>
+</div>
+</div>
+            {% endif %}
+        {% endif %}
+{% endif %}
+
+
+
+{% endblock %}

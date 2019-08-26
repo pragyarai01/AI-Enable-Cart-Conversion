@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block base_head %}
+ <link rel="icon"  href="http://pluspng.com/img-png/dell-logo-png-new-svg-image-2000.png" >
+{% endblock %}
+
+{% block content %}
+
+  <div class="container-fluid bg-grey">
+    <div class='row'>
+        <div class='col-md-6'>
+                <h1>{{ object.title }}</h1>
+                {{ object.timestamp|timesince }} ago
+                {{ object.description|linebreaks }}<br/>
+                {% if object.image %}
+                    <img src='{{ object.image.url }}' class='img-fluid' />
+                {% endif %}
+        </div>
+       <!--  <div class='col-md-6'>
+            
+
+     </div> -->
+        <div class='col-md-6'>
+           {% include 'products/snippets/update-cart.html' with product=object cart=cart %}
+           <iframe width="420" height="345" src="https://www.youtube.com/embed/{{object.video}}" style="margin-top: 50px;">
+           </iframe>
+        </div>
+   </div>
+</div>
+{% endblock %}
+
+<!-- <div class="container-fluid bg-grey">
+      <div class="row">
+        <div class="col-md-6">
+          <span class=" slideanim"><a href="http://localhost:8000/products/"><img src="//i.dell.com/sites/csimages/Banner_Imagery/en/in-dhs-gaming-uber-home-page-ena-570x283.jpg" hp-lazy-prior="medium" onerror="this.style.display='none'" alt="Gaming PCs"></a></span>
+        </div> -->

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block base_head %}
+ <link rel="icon"  href="http://pluspng.com/img-png/dell-logo-png-new-svg-image-2000.png" >
+{% endblock %}
+
+
+{% block content %}
+
+<div class='col-10 col-md-6 mx-auto'>
+    <h1>Add Payment Method</h1>
+    <div class='stripe-payment-form' data-token='{{ publish_key }}' data-next-url='{% if next_url %}{{ next_url }}{% endif %}' data-btn-title='Add New Card'></div>
+    <div id="upi"></div>
+
+
+<script type="text/javascript">
+    window.onload = loadUPIHandlers;
+    function loadUPIHandlers() {
+      var a = ApuSDK.upiHandlers();
+      var upiList = a.length == 0 ? [] : a.split(",");
+      var dom = "";
+      if (upiList.length == 0) {
+        dom = '<div class="box">No UPI Apps found on phone.</div>';
+      } else {
+        for (var i = 0; i < upiList.length; i++) {
+          var info = upiList[i].split("|");
+          dom += '<div onClick="openUPI(\'' + info[0] + '\',\'' + info[1] + '\')"><h4><a href="javascript:void(0)">' + info[0] + '</a></h4></div>';
+        }
+      }
+      document.getElementById("upi").innerHTML = dom;
+    }
+    function openUPI(package, activity) {
+      ApuSDK.openUPIHandler(package, activity)
+    }
+  </script>
+</div>
+
+
+{% endblock %}

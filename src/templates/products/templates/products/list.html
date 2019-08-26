@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block base_head %}
+ <link rel="icon"  href="http://pluspng.com/img-png/dell-logo-png-new-svg-image-2000.png" >
+{% endblock %}
+
+{% block content %}
+        <div class='row'>
+
+    {% for obj in object_list %}
+        <div class='col my-3'>
+        {% include 'products/snippets/card.html' with instance=obj %}  
+        
+        </div>
+    {% endfor %}
+</div>
+<footer id="myFooter">
+    <div class="container">
+          <div class = "row">
+      <div class="col-md-1">
+      </div>
+      <div class="col-md-3">  
+        <iframe src="https://www.360cities.net/embed_iframe/east-rand-mall-south-africa" width=425 height=300 frameborder="1" bgcolor="#000000" target="_blank" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe><br/><a title="Panorama photos of East Rand Mall on 360cities.net" href="https://www.360cities.net/image/east-rand-mall-south-africa">INSIDE STORE</a>
+      </div>
+      <div class="col-md-2">
+      </div>
+      <div class="col-md-3">
+         <iframe src="https://www.360cities.net/embed_iframe/apple-store-carindale" width=425 height=300 frameborder="1" bgcolor="#000000" target="_blank" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe><br/><a title="Panorama photos of Apple store Carindale on 360cities.net" href="https://www.360cities.net/image/apple-store-carindale">Apple store Carindale</a>
+      </div>
+    </div>
+ 	
+    </div><hr>    
+    <div class="footer-copyright">
+      <p><a href="admin_login.php">© 2018-2019 Copyright by Customer-Shop, All rights reserved</a></p>
+        </div>
+    </footer>
+{% endblock %}

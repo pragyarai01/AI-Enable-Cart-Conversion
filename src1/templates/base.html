@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <!-- Required meta tags -->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <script type="text/javascript" src="http://yourjavascript.com/3303891138/artyom-min.js"></script>
+      <title>Dell Official Site</title>
+        {% include 'base/css.html' %}
+        {% block base_head %}{% endblock %}
+    </head>
+    <body>
+      {% include 'base/navbar.html' with brand_name='DELL' %}
+      <div class='container-fluid'>
+        {% if messages %}
+      <div class="alert alert-success messages">
+          {% for message in messages %}
+          <span{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+              {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+              {{ message }}<br/>
+          </span>
+          {% endfor %}
+      </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+
+        {% include 'base/js.html' %}
+        {% block javascript %}
+
+        {% endblock %}
+
+              <span id="output" style="font-size:20px;color:red;"></span><br>
+      <span id="time" style="font-size:35px;color:green;"></span><br>
+
+
+      <input id="load-voices" type="button" value=""/>
+    </div>
+    <script>
+    startArtyom();
+
+    $("#talk-lang").click(function(){
+        artyom.say($("#text-content").val());
+    });
+    $("#select-voice").change(function(){
+        var lang = $(this).val();
+        artyom.initialize({lang:lang});
+    });
+    document.getElementById("load-voices").addEventListener("click", function(){
+        var voices = artyom.getVoices();
+        var html = "";
+        voices.forEach(function(voice){
+            html += "Voz name : " + voice.name + " con lang : " + voice.lang + "<br>";
+        });
+        document.getElementById("voices-item").innerHTML = html;
+    }, false);
+      // Now we add the most important point of the plugin, the commands
+      // This library is very flexible and now we will see why :
+      // Every command is a literal object
+      artyom.addCommands([
+        {
+          description:"Artyom can talk too, lets say something if we say hello",
+          indexes:["hello","hey"],
+          action:function(i){
+              // i = the index of the array of indexes option
+              if(i == 0){
+                //You say : "hello"
+                document.getElementById('time').innerHTML = "Hello ! How are you?";
+                var msg = new SpeechSynthesisUtterance('Hello! How are you?');
+                window.speechSynthesis.speak(msg);
+              }
+          }
+        },
+        {
+          description:"Say goodbye",
+          indexes:["goodbye"],
+
+          action:function(){
+            alert("See you soon!!");
+            
+          }
+
+        },
+        {
+          description: "home",
+          indexes:["go back","go back*","home","home*"],
+          smart:true,
+          action:function(i,wildcard){
+            window.open("http://localhost:8000/","_self")
+            // stopArtyom();
+            // var msg = new SpeechSynthesisUtterance('Welcome to dell homepage!');
+            // window.speechSynthesis.speak(msg);
+            // setTimeout(myFunction, 3000);
+            // startArtyom();
+          }
+        },
+        {
+          description: "Products",
+          indexes:["Products","pro*"],
+          smart:true,
+          action:function(i,wildcard){
+            window.open("http://localhost:8000/products/","_self")
+            // stopArtyom();
+            // var msg = new SpeechSynthesisUtterance('Welcome to dell products page!');
+            // window.speechSynthesis.speak(msg);
+            // setTimeout(myFunction, 3000);
+            // startArtyom();
+          }
+        },
+        {
+          description: "login",
+          indexes:["login","log*"],
+          smart:true,
+          action:function(i,wildcard){
+            window.open("http://localhost:8000/login/","_self")
+            // stopArtyom();
+            // var msg = new SpeechSynthesisUtterance('Please fill your credentials to login!');
+            // window.speechSynthesis.speak(msg);
+            // setTimeout(myFunction, 3000);
+            // startArtyom();
+          }
+        },
+        {
+          description: "register",
+          indexes:["register","reg*"],
+          smart:true,
+          action:function(i,wildcard){
+            window.open("http://localhost:8000/register/","_self")
+            // stopArtyom();
+            // var msg = new SpeechSynthesisUtterance('Fill your details to register!');
+            // window.speechSynthesis.speak(msg);
+            // setTimeout(myFunction, 3000);
+            // startArtyom();
+          }
+        },
+        {
+          description: "contact",
+          indexes:["contact","con*"],
+          smart:true,
+          action:function(i,wildcard){
+            window.open("http://localhost:8000/contact/","_self")
+            // stopArtyom();
+            // var msg = new SpeechSynthesisUtterance('Contact page opened!');
+            // window.speechSynthesis.speak(msg);
+            // setTimeout(myFunction, 3000);
+            // startArtyom();
+          }
+        },
+        {
+          description: "cart",
+          indexes:["cart","car*"],
+          smart:true,
+          action:function(i,wildcard){
+            window.open("http://localhost:8000/cart/","_self")
+            // stopArtyom();
+            // var msg = new SpeechSynthesisUtterance('Welcome to your cart! The items in your cart are waiting for you.');
+            // window.speechSynthesis.speak(msg);
+            // setTimeout(myFunction, 3000);
+            // startArtyom();
+          }
+        },
+        {
+          description: "play",
+          indexes:["play","play*"],
+          smart:true,
+          action:function playVideo() {
+  $("#video").src += "&autoplay=1";
+          // ev.preventDefault();  
+}
+        }
+      ]);
+      // Redirect the recognized text
+      artyom.redirectRecognizedTextOutput(function(text,isFinal){
+      // window.alert((artyom.say($("#text-content").val())));
+        var span = document.getElementById('output');
+        if(isFinal){
+          span.innerHTML = '';
+        }else {
+          span.innerHTML = text;
+        }
+      });
+      function startArtyom(){
+        artyom.initialize({
+          lang:"en-GB",// More languages are documented in the library
+          continuous:true,//if you have https connection, you can activate continuous mode
+          debug:true,//Show everything in the console
+          listen:true // Start listening when this function is triggered
+        });
+      }
+      function stopArtyom(){
+        artyom.fatality();
+      }
+      
+    </script>
+<script type="text/javascript">
+      /* NOTE : Use web server to view HTML files as real-time update will not work if you directly open the HTML file in the browser. */
+      (function(d, m){
+        var kommunicateSettings = {"appId":"2bf68045025edb5846d487f0f3033bde5","popupWidget":true,"automaticChatOpenOnNavigation":true};
+        var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
+        s.src = "https://widget.kommunicate.io/v2/kommunicate.app";
+        var h = document.getElementsByTagName("head")[0]; h.appendChild(s);
+        window.kommunicate = m; m._globals = kommunicateSettings;
+      })(document, window.kommunicate || {});
+  </script>
+    </body>
+  </html>
